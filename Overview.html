@@ -3809,10 +3809,6 @@ constructor must run these steps:
  <a href="#concept-body-locked" title="concept-Body-locked">locked</a>, <a class="external" data-anolis-spec="webidl" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a
  <code title="">TypeError</code>.
 
- <li><p>Let <var>temporaryBody</var> be <var>input</var>'s
- <a href="#concept-request-request" title="concept-Request-request">request</a>'s <a href="#concept-request-body" title="concept-request-body">body</a>
- if <var>input</var> is a <a href="#request"><code>Request</code></a> object, and null otherwise.
-
  <li><p>Let <var>request</var> be <var>input</var>'s
  <a href="#concept-request-request" title="concept-Request-request">request</a>, if <var>input</var> is a
  <a href="#request"><code>Request</code></a> object, and a new <a href="#concept-request" title="concept-request">request</a>
@@ -4041,8 +4037,12 @@ constructor must run these steps:
  <li><p><a href="#concept-headers-fill" title="concept-Headers-fill">Fill</a> <var>r</var>'s
  <a href="#headers"><code>Headers</code></a> object with <var>headers</var>. Rethrow any exceptions.
 
+ <li><p>Let <var>inputBody</var> be <var>input</var>'s
+ <a href="#concept-request-request" title="concept-Request-request">request</a>'s <a href="#concept-request-body" title="concept-request-body">body</a>
+ if <var>input</var> is a <a href="#request"><code>Request</code></a> object, and null otherwise.
+
  <li><p>If either <var>init</var>'s <code title="">body</code> member is present and is non-null or
- <var>temporaryBody</var> is non-null, and <var>request</var>'s
+ <var>inputBody</var> is non-null, and <var>request</var>'s
  <a href="#concept-request-method" title="concept-request-method">method</a> is `<code title="">GET</code>` or
  `<code title="">HEAD</code>`, <a class="external" data-anolis-spec="webidl" href="https://heycam.github.io/webidl/#dfn-throw">throw</a> a
  <code title="">TypeError</code>.
@@ -4054,7 +4054,7 @@ constructor must run these steps:
   <ol>
    <li><p>Let <var>Content-Type</var> be null.
 
-   <li><p>Set <var>temporaryBody</var> and <var>Content-Type</var> to the result of
+   <li><p>Set <var>inputBody</var> and <var>Content-Type</var> to the result of
    <a href="#concept-bodyinit-extract" title="concept-BodyInit-extract">extracting</a> <var>init</var>'s
    <code title="">body</code> member. Rethrow any exceptions.
 
@@ -4068,7 +4068,7 @@ constructor must run these steps:
   </ol>
 
  <li><p>Set <var>r</var>'s <a href="#concept-request-request" title="concept-Request-request">request</a>'s
- <a href="#concept-request-body" title="concept-request-body">body</a> to <var>temporaryBody</var>.
+ <a href="#concept-request-body" title="concept-request-body">body</a> to <var>inputBody</var>.
  <!-- Any steps after this must not throw. -->
 
  <li><p>Set <var>r</var>'s <a href="#concept-body-mime-type" title="concept-Body-MIME-type">MIME type</a> to
@@ -4082,23 +4082,34 @@ constructor must run these steps:
   <a href="#concept-request-body" title="concept-request-body">body</a> is non-null, run these substeps:
 
   <ol>
-   <li><p>Let <var>stream</var> be an <a href="#concept-empty-readablestream" title="concept-empty-ReadableStream">empty</a>
+   <li><p>Let <var>dummyStream</var> be an <a href="#concept-empty-readablestream" title="concept-empty-ReadableStream">empty</a>
    <a href="#concept-readablestream"><code title="concept-ReadableStream">ReadableStream</code></a> object.
 
    <li><p>Set <var>input</var>'s <a href="#concept-request-request" title="concept-Request-request">request</a>'s
    <a href="#concept-request-body" title="concept-request-body">body</a> to a new <a href="#concept-body" title="concept-body">body</a> whose
-   <a href="#concept-body-stream" title="concept-body-stream">stream</a> is <var>stream</var>.
+   <a href="#concept-body-stream" title="concept-body-stream">stream</a> is <var>dummyStream</var>.
 
    <li>
     <p>Let <var>reader</var> be the result of <a href="#concept-get-reader" title="concept-get-reader">getting a reader</a>
-    from <var>stream</var>.
+    from <var>dummyStream</var>.
     <p class="note no-backref">This operation will not throw an exception.
 
    <li>
     <p><a href="#concept-read-all-bytes-from-readablestream" title="concept-read-all-bytes-from-ReadableStream">Read all bytes</a> from
-    <var>stream</var> with <var>reader</var>.
-    <p class="note no-backref">This operation makes <var>stream</var> disturbed.
+    <var>dummyStream</var> with <var>reader</var>.
+    <p class="note no-backref">This operation makes <var>dummyStream</var> disturbed.
   </ol>
+
+  <p class="note no-backref">These substeps are meant to produce the observable equivalent of
+  "piping" <var>input</var>'s <a href="#concept-body-body" title="concept-Body-body">body</a>'s
+  <a href="#concept-body-stream" title="concept-body-stream">stream</a> into <var>r</var>. That is, <var>input</var> is
+  left with a <a href="#concept-body" title="concept-body">body</a> with a
+  <a href="#concept-readablestream"><code title="concept-ReadableStream">ReadableStream</code></a> object that is
+  <a href="#concept-readablestream-disturbed" title="concept-ReadableStream-disturbed">disturbed</a>,
+  <a href="#concept-readablestream-locked" title="concept-ReadableStream-locked">locked</a>, while the data readable from
+  <var>r</var>'s <a href="#concept-body-body" title="concept-Body-body">body</a>'s
+  <a href="#concept-body-stream" title="concept-body-stream">stream</a> is now equal to what used to be <var>input</var>'s,
+  if <var>input</var>'s original <a href="#concept-body-body" title="concept-Body-body">body</a> is non-null.
 
  <li><p>Return <var>r</var>.
 </ol>

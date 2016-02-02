@@ -3748,10 +3748,6 @@ constructor must run these steps:
  <span title=concept-Body-locked>locked</span>, <span data-anolis-spec=webidl>throw</span> a
  <code title>TypeError</code>.
 
- <li><p>Let <var>temporaryBody</var> be <var>input</var>'s
- <span title=concept-Request-request>request</span>'s <span title=concept-request-body>body</span>
- if <var>input</var> is a <code>Request</code> object, and null otherwise.
-
  <li><p>Let <var>request</var> be <var>input</var>'s
  <span title=concept-Request-request>request</span>, if <var>input</var> is a
  <code>Request</code> object, and a new <span title=concept-request>request</span>
@@ -3980,8 +3976,12 @@ constructor must run these steps:
  <li><p><span title=concept-Headers-fill>Fill</span> <var>r</var>'s
  <code>Headers</code> object with <var>headers</var>. Rethrow any exceptions.
 
+ <li><p>Let <var>inputBody</var> be <var>input</var>'s
+ <span title=concept-Request-request>request</span>'s <span title=concept-request-body>body</span>
+ if <var>input</var> is a <code>Request</code> object, and null otherwise.
+
  <li><p>If either <var>init</var>'s <code title>body</code> member is present and is non-null or
- <var>temporaryBody</var> is non-null, and <var>request</var>'s
+ <var>inputBody</var> is non-null, and <var>request</var>'s
  <span title=concept-request-method>method</span> is `<code title>GET</code>` or
  `<code title>HEAD</code>`, <span data-anolis-spec=webidl>throw</span> a
  <code title>TypeError</code>.
@@ -3993,7 +3993,7 @@ constructor must run these steps:
   <ol>
    <li><p>Let <var>Content-Type</var> be null.
 
-   <li><p>Set <var>temporaryBody</var> and <var>Content-Type</var> to the result of
+   <li><p>Set <var>inputBody</var> and <var>Content-Type</var> to the result of
    <span title=concept-BodyInit-extract>extracting</span> <var>init</var>'s
    <code title>body</code> member. Rethrow any exceptions.
 
@@ -4007,7 +4007,7 @@ constructor must run these steps:
   </ol>
 
  <li><p>Set <var>r</var>'s <span title=concept-Request-request>request</span>'s
- <span title=concept-request-body>body</span> to <var>temporaryBody</var>.
+ <span title=concept-request-body>body</span> to <var>inputBody</var>.
  <!-- Any steps after this must not throw. -->
 
  <li><p>Set <var>r</var>'s <span title=concept-Body-MIME-type>MIME type</span> to
@@ -4021,23 +4021,34 @@ constructor must run these steps:
   <span title=concept-request-body>body</span> is non-null, run these substeps:
 
   <ol>
-   <li><p>Let <var>stream</var> be an <span title=concept-empty-ReadableStream>empty</span>
+   <li><p>Let <var>dummyStream</var> be an <span title=concept-empty-ReadableStream>empty</span>
    <code title=concept-ReadableStream>ReadableStream</code> object.
 
    <li><p>Set <var>input</var>'s <span title=concept-Request-request>request</span>'s
    <span title=concept-request-body>body</span> to a new <span title=concept-body>body</span> whose
-   <span title=concept-body-stream>stream</span> is <var>stream</var>.
+   <span title=concept-body-stream>stream</span> is <var>dummyStream</var>.
 
    <li>
     <p>Let <var>reader</var> be the result of <span title=concept-get-reader>getting a reader</span>
-    from <var>stream</var>.
+    from <var>dummyStream</var>.
     <p class="note no-backref">This operation will not throw an exception.
 
    <li>
     <p><span title=concept-read-all-bytes-from-ReadableStream>Read all bytes</span> from
-    <var>stream</var> with <var>reader</var>.
-    <p class="note no-backref">This operation makes <var>stream</var> disturbed.
+    <var>dummyStream</var> with <var>reader</var>.
+    <p class="note no-backref">This operation makes <var>dummyStream</var> disturbed.
   </ol>
+
+  <p class="note no-backref">These substeps are meant to produce the observable equivalent of
+  "piping" <var>input</var>'s <span title=concept-Body-body>body</span>'s
+  <span title=concept-body-stream>stream</span> into <var>r</var>. That is, <var>input</var> is
+  left with a <span title=concept-body>body</span> with a
+  <code title=concept-ReadableStream>ReadableStream</code> object that is
+  <span title=concept-ReadableStream-disturbed>disturbed</span>,
+  <span title=concept-ReadableStream-locked>locked</span>, while the data readable from
+  <var>r</var>'s <span title=concept-Body-body>body</span>'s
+  <span title=concept-body-stream>stream</span> is now equal to what used to be <var>input</var>'s,
+  if <var>input</var>'s original <span title=concept-Body-body>body</span> is non-null.
 
  <li><p>Return <var>r</var>.
 </ol>
