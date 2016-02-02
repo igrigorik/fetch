@@ -7,7 +7,7 @@
 
 <p><a class="logo" href="https://whatwg.org/"><img alt="WHATWG" height="100" src="https://resources.whatwg.org/logo-fetch.svg" width="100"></a>
 <h1 id="cors">Fetch</h1>
-<h2 class="no-num no-toc" id="living-standard-—-last-updated-25-january-2016">Living Standard — Last Updated 25 January 2016</h2>
+<h2 class="no-num no-toc" id="living-standard-—-last-updated-2-february-2016">Living Standard — Last Updated 2 February 2016</h2>
 
 <dl>
  <dt>Participate:
@@ -261,7 +261,7 @@ annotated as one of the following:
 <var>request</var>'s <a href="#concept-request-body" title="concept-request-body">body</a> is read from (i.e.
 is transmitted or read by script), increase <var>request</var>'s
 <a href="#concept-request-body" title="concept-request-body">body</a>'s
-<a href="#concept-body-transmitted" title="concept-body-transmitted">transmitted</a> with the amount of payload body
+<a href="#concept-body-transmitted" title="concept-body-transmitted">transmitted bytes</a> with the amount of payload body
 bytes transmitted and then <a href="#queue-a-fetch-task">queue a fetch task</a> on <var>request</var> to
 <a href="#process-request-body">process request body</a> for <var>request</var>.
 <!-- XXX xref "read", "payload body" -->
@@ -503,23 +503,22 @@ steps:
 
 <h4 id="bodies"><span class="secno">3.1.4 </span>Bodies</h4>
 
-<p>A <dfn id="concept-body" title="concept-body">body</dfn> consists of a
-<a href="#concept-readablestream"><code title="concept-ReadableStream">ReadableStream</code></a> object and accompanying data.
+<p>A <dfn id="concept-body" title="concept-body">body</dfn> consists of:
 
-<p>A <a href="#concept-body" title="concept-body">body</a> has an associated
-<dfn id="concept-body-stream" title="concept-body-stream">stream</dfn> (a
-<a href="#concept-readablestream"><code title="concept-ReadableStream">ReadableStream</code></a> object).
+<ul>
+ <li>
+  <p>A <dfn id="concept-body-stream" title="concept-body-stream">stream</dfn> (a
+  <a href="#concept-readablestream"><code title="concept-ReadableStream">ReadableStream</code></a> object).
 
-<p class="XXX"><a href="https://github.com/whatwg/streams/issues/379">This might become a
-<code>ReadableByteStream</code> object</a>. While the type might change, the behavior specified will
-be equivalent since the hypothetical <code title="">ReadableByteStream</code> object will have the same
-members as the <a href="#concept-readablestream"><code title="concept-ReadableStream">ReadableStream</code></a> object has today.
+  <p class="XXX"><a href="https://github.com/whatwg/streams/issues/379">This might become a
+  <code>ReadableByteStream</code> object</a>. While the type might change, the behavior specified
+  will be equivalent since the hypothetical <code title="">ReadableByteStream</code> object will have
+  the same members as the <a href="#concept-readablestream"><code title="concept-ReadableStream">ReadableStream</code></a> object has today.
 
-<p>A <a href="#concept-body" title="concept-body">body</a> has an associated
-<dfn id="concept-body-transmitted" title="concept-body-transmitted">transmitted</dfn> (an integer). Unless stated otherwise it is 0.
+ <li><p>A <dfn id="concept-body-transmitted" title="concept-body-transmitted">transmitted bytes</dfn> (an integer), initially 0.
 
-<p>A <a href="#concept-body" title="concept-body">body</a> has an associated
-<dfn id="concept-body-total-bytes" title="concept-body-total-bytes">total bytes</dfn> (an integer). Unless stated otherwise it is 0.
+ <li><p>A <dfn id="concept-body-total-bytes" title="concept-body-total-bytes">total bytes</dfn> (an integer), initially 0.
+</ul>
 
 <p>To <dfn id="concept-body-clone" title="concept-body-clone">clone</dfn> a <a href="#concept-body" title="concept-body">body</a>
 <var>body</var>, run these steps:
@@ -1325,7 +1324,7 @@ run these steps:
  <li>Return <var>stream</var>.
 </ol>
 
-<p>To <dfn id="concept-get-reader" title="concept-get-reader">get</dfn> a reader from a
+<p>To <dfn id="concept-get-reader" title="concept-get-reader">get a reader</dfn> from a
 <a href="#concept-readablestream"><code title="concept-ReadableStream">ReadableStream</code></a> object <var>stream</var>, run these steps:
 
 <ol>
@@ -1336,7 +1335,7 @@ run these steps:
  <li><p>Return <var>reader</var>.
 </ol>
 
-<p>To <dfn id="concept-read-all-bytes-from-readablestream" title="concept-read-all-bytes-from-ReadableStream">read</dfn> all bytes from a
+<p>To <dfn id="concept-read-all-bytes-from-readablestream" title="concept-read-all-bytes-from-ReadableStream">read all bytes</dfn> from a
 <a href="#concept-readablestream"><code title="concept-ReadableStream">ReadableStream</code></a> object with <var>reader</var>, run these
 steps:
 
@@ -2854,7 +2853,7 @@ The <i title="">credentials flag</i> is one too.
     <ol>
      <li><p>Increase <var>response</var>'s
      <a href="#concept-response-body" title="concept-response-body">body</a>'s
-     <a href="#concept-body-transmitted" title="concept-body-transmitted">transmitted</a> with <var>bytes</var>'
+     <a href="#concept-body-transmitted" title="concept-body-transmitted">transmitted bytes</a> with <var>bytes</var>'
      length.
 
      <li><p>Let <var>codings</var> be the result of
@@ -3692,17 +3691,18 @@ runs these steps:
  non-null, or an <a href="#concept-empty-readablestream" title="concept-empty-ReadableStream">empty</a>
  <a href="#concept-readablestream"><code title="concept-ReadableStream">ReadableStream</code></a> object otherwise.
 
- <li><p>Let <var>reader</var> be the result of <a href="#concept-get-reader" title="concept-get-reader">getting</a>
- a reader from <var>stream</var>. If that threw an exception, return a new promise rejected
+ <li><p>Let <var>reader</var> be the result of <a href="#concept-get-reader" title="concept-get-reader">getting
+ a reader</a> from <var>stream</var>. If that threw an exception, return a new promise rejected
  with that exception.
 
  <li><p>Let <var>promise</var> be the result of
- <a href="#concept-read-all-bytes-from-readablestream" title="concept-read-all-bytes-from-ReadableStream">reading</a> all bytes from
+ <a href="#concept-read-all-bytes-from-readablestream" title="concept-read-all-bytes-from-ReadableStream">reading all bytes</a> from
  <var>stream</var> with <var>reader</var>.
 
  <li><p>Return the result of transforming <var>promise</var> by a fulfillment handler that
  returns the result of the <a href="#concept-body-package-data" title="concept-body-package-data">package data</a> algorithm
- with its first argument, <var>type</var> and <a href="#concept-body-mime-type" title="concept-body-mime-type">MIME type</a>.
+ with its first argument, <var>type</var> and this object's
+ <a href="#concept-body-mime-type" title="concept-body-mime-type">MIME type</a>.
  <!-- XXX IDL really needs to define "transforming". For now it is defined in
           https://www.w3.org/2001/tag/doc/promises-guide -->
 </ol>
@@ -4090,12 +4090,12 @@ constructor must run these steps:
    <a href="#concept-body-stream" title="concept-body-stream">stream</a> is <var>stream</var>.
 
    <li>
-    <p>Let <var>reader</var> be the result of <a href="#concept-get-reader" title="concept-get-reader">getting</a> a reader
+    <p>Let <var>reader</var> be the result of <a href="#concept-get-reader" title="concept-get-reader">getting a reader</a>
     from <var>stream</var>.
     <p class="note no-backref">This operation will not throw an exception.
 
    <li>
-    <p><a href="#concept-read-all-bytes-from-readablestream" title="concept-read-all-bytes-from-ReadableStream">Read</a> all bytes from
+    <p><a href="#concept-read-all-bytes-from-readablestream" title="concept-read-all-bytes-from-ReadableStream">Read all bytes</a> from
     <var>stream</var> with <var>reader</var>.
     <p class="note no-backref">This operation makes <var>stream</var> disturbed.
   </ol>

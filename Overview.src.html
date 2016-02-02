@@ -200,7 +200,7 @@ annotated as one of the following:
 <var>request</var>'s <span title=concept-request-body>body</span> is read from (i.e.
 is transmitted or read by script), increase <var>request</var>'s
 <span title=concept-request-body>body</span>'s
-<span title=concept-body-transmitted>transmitted</span> with the amount of payload body
+<span title=concept-body-transmitted>transmitted bytes</span> with the amount of payload body
 bytes transmitted and then <span>queue a fetch task</span> on <var>request</var> to
 <span>process request body</span> for <var>request</var>.
 <!-- XXX xref "read", "payload body" -->
@@ -442,23 +442,22 @@ steps:
 
 <h4>Bodies</h4>
 
-<p>A <dfn title=concept-body>body</dfn> consists of a
-<code title=concept-ReadableStream>ReadableStream</code> object and accompanying data.
+<p>A <dfn title=concept-body>body</dfn> consists of:
 
-<p>A <span title=concept-body>body</span> has an associated
-<dfn title=concept-body-stream>stream</dfn> (a
-<code title=concept-ReadableStream>ReadableStream</code> object).
+<ul>
+ <li>
+  <p>A <dfn title=concept-body-stream>stream</dfn> (a
+  <code title=concept-ReadableStream>ReadableStream</code> object).
 
-<p class="XXX"><a href="https://github.com/whatwg/streams/issues/379">This might become a
-<code>ReadableByteStream</code> object</a>. While the type might change, the behavior specified will
-be equivalent since the hypothetical <code title>ReadableByteStream</code> object will have the same
-members as the <code title=concept-ReadableStream>ReadableStream</code> object has today.
+  <p class="XXX"><a href="https://github.com/whatwg/streams/issues/379">This might become a
+  <code>ReadableByteStream</code> object</a>. While the type might change, the behavior specified
+  will be equivalent since the hypothetical <code title>ReadableByteStream</code> object will have
+  the same members as the <code title=concept-ReadableStream>ReadableStream</code> object has today.
 
-<p>A <span title=concept-body>body</span> has an associated
-<dfn title=concept-body-transmitted>transmitted</dfn> (an integer). Unless stated otherwise it is 0.
+ <li><p>A <dfn title=concept-body-transmitted>transmitted bytes</dfn> (an integer), initially 0.
 
-<p>A <span title=concept-body>body</span> has an associated
-<dfn title=concept-body-total-bytes>total bytes</dfn> (an integer). Unless stated otherwise it is 0.
+ <li><p>A <dfn title=concept-body-total-bytes>total bytes</dfn> (an integer), initially 0.
+</ul>
 
 <p>To <dfn title=concept-body-clone>clone</dfn> a <span title=concept-body>body</span>
 <var>body</var>, run these steps:
@@ -1264,7 +1263,7 @@ run these steps:
  <li>Return <var>stream</var>.
 </ol>
 
-<p>To <dfn title=concept-get-reader>get</dfn> a reader from a
+<p>To <dfn title=concept-get-reader>get a reader</dfn> from a
 <code title=concept-ReadableStream>ReadableStream</code> object <var>stream</var>, run these steps:
 
 <ol>
@@ -1275,7 +1274,7 @@ run these steps:
  <li><p>Return <var>reader</var>.
 </ol>
 
-<p>To <dfn title=concept-read-all-bytes-from-ReadableStream>read</dfn> all bytes from a
+<p>To <dfn title=concept-read-all-bytes-from-ReadableStream>read all bytes</dfn> from a
 <code title=concept-ReadableStream>ReadableStream</code> object with <var>reader</var>, run these
 steps:
 
@@ -2793,7 +2792,7 @@ The <i title>credentials flag</i> is one too.
     <ol>
      <li><p>Increase <var>response</var>'s
      <span title=concept-response-body>body</span>'s
-     <span title=concept-body-transmitted>transmitted</span> with <var>bytes</var>'
+     <span title=concept-body-transmitted>transmitted bytes</span> with <var>bytes</var>'
      length.
 
      <li><p>Let <var>codings</var> be the result of
@@ -3631,17 +3630,18 @@ runs these steps:
  non-null, or an <span title=concept-empty-ReadableStream>empty</span>
  <code title=concept-ReadableStream>ReadableStream</code> object otherwise.
 
- <li><p>Let <var>reader</var> be the result of <span title=concept-get-reader>getting</span>
- a reader from <var>stream</var>. If that threw an exception, return a new promise rejected
+ <li><p>Let <var>reader</var> be the result of <span title=concept-get-reader>getting
+ a reader</span> from <var>stream</var>. If that threw an exception, return a new promise rejected
  with that exception.
 
  <li><p>Let <var>promise</var> be the result of
- <span title=concept-read-all-bytes-from-ReadableStream>reading</span> all bytes from
+ <span title=concept-read-all-bytes-from-ReadableStream>reading all bytes</span> from
  <var>stream</var> with <var>reader</var>.
 
  <li><p>Return the result of transforming <var>promise</var> by a fulfillment handler that
  returns the result of the <span title=concept-body-package-data>package data</span> algorithm
- with its first argument, <var>type</var> and <span title=concept-body-mime-type>MIME type</span>.
+ with its first argument, <var>type</var> and this object's
+ <span title=concept-body-mime-type>MIME type</span>.
  <!-- XXX IDL really needs to define "transforming". For now it is defined in
           https://www.w3.org/2001/tag/doc/promises-guide -->
 </ol>
@@ -4029,12 +4029,12 @@ constructor must run these steps:
    <span title=concept-body-stream>stream</span> is <var>stream</var>.
 
    <li>
-    <p>Let <var>reader</var> be the result of <span title=concept-get-reader>getting</span> a reader
+    <p>Let <var>reader</var> be the result of <span title=concept-get-reader>getting a reader</span>
     from <var>stream</var>.
     <p class="note no-backref">This operation will not throw an exception.
 
    <li>
-    <p><span title=concept-read-all-bytes-from-ReadableStream>Read</span> all bytes from
+    <p><span title=concept-read-all-bytes-from-ReadableStream>Read all bytes</span> from
     <var>stream</var> with <var>reader</var>.
     <p class="note no-backref">This operation makes <var>stream</var> disturbed.
   </ol>
